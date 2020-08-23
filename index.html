@@ -1,159 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-    crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Weather Forecast</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-    <!-- UPON A FRESH, LOCALSTORAGE FREE LOAD OF THE PAGE THE ONLY THINGS ORIGINALLY DISPLAYED
-    ARE THE JUMBOTRON AND THE SEARCH BAR -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="navbar-brand">
+            <h1>Weather Forecast</h1>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-3 col-lg-4" style="background: #F8F9FA;">
+                <div class="mb-2"></div>
+                <h4>Search for a city:</h4>
+                <input id="searchTxt" type="text" placeholder="Search.." name="search">
+                <button id="searchBtn" class="btn btn-primary" style="width: 40px;" data-toggle="tooltip" title="Search">
+                    <i class="fa fa-search"></i>
+                </button>
+                <button id="locationBtn" class="btn btn-primary" style="width: 40px;" data-toggle="tooltip" title="Search by current location">
+                    <i class="fa fa-map-marker"></i>
+                </button>
+                <button id="trashBtn" class="btn btn-primary" style="width: 40px;" data-toggle="tooltip" title="Delete search history">
+                    <i class="fa fa-trash-o"></i>
+                </button>
+                <div class="mb-1"></div>
+                <div id="errorMessage"></div>
+                <div class="card" id="previousSearchKeywords"></div>
+                <!-- The previous search history goes here -->
+            </div>
+            <div class="col-12 col-sm-12 col-md-9 col-lg-8">
+                <div class="mb-2"></div>
+                <div class="card">
+                    <div class="card-body">
+                        <div id="loadingTodayWeather" class="spinner-border" role="status"></div>
+                        <h3 class="card-title"><span id="todayCity"></span></h3>
+                        <div>Temperature: <span id="todayTemp"></span> °C</div>
+                        <div>Humidity: <span id="todayHumidity"></span> %</div>
+                        <div>Wind Speed: <span id="todayWind"></span> km/h</div>
+                        <div>UV Index: <span id="todayUV"></span></div>
+                    </div>
+                </div>
+                <div class="mb-4"></div>
+                <h4>5-Day Forecast:</h4>
+                <div class="card-deck">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div id="1day" class="card-title">
+                            </div>
+                            <div><span id="1dayIcon"></span></div>
+                            <div>Temp: <span id="1dayTemp"></span> °C</div>
+                            <div>Humidity: <span id="1dayHumidity"></span> %</div>
+                        </div>
+                    </div>
 
-		<!-- jumbotron     -->
-		<div class="jumbotron">
-			<h1 class="display-4 text-center">Weather Dashboard</h1>
-		</div>
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div id="2day" class="card-title">
+                            </div>
+                            <div><span id="2dayIcon"></span></div>
+                            <div>Temp: <span id="2dayTemp"></span> °C</div>
+                            <div>Humidity: <span id="2dayHumidity"></span> %</div>
+                        </div>
+                    </div>
 
-		<div class="container">
-			<!-- ROW ONE COLUMN ONE-->
-			<div class="row r1">
-				<div class="col-md-4 c1">
-					<!-- Left Side:
-					Search box and area to append searched terms buttons -->
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div id="3day" class="card-title">
+                            </div>
+                            <div><span id="3dayIcon"></span></div>
+                            <div>Temp: <span id="3dayTemp"></span> °C</div>
+                            <div>Humidity: <span id="3dayHumidity"></span> %</div>
+                        </div>
+                    </div>
 
-					<h4>Search for a City:</h4>
-					<form id="city-form">
-						<input type="text" id="city-input" />
-						<button type="button" id="add-city" class="btn btn-primary">
-							<i class="fas fa-search"></i>
-							Submit
-						</button>
-					</form>
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div id="4day" class="card-title">
+                            </div>
+                            <div><span id="4dayIcon"></span></div>
+                            <div>Temp: <span id="4dayTemp"></span> °C</div>
+                            <div>Humidity: <span id="4dayHumidity"></span> %</div>
+                        </div>
+                    </div>
 
-					<!-- Buttons will get dumped here: -->
-					<div id="buttons-view" class="card" style="width: 18rem;">
-						<ul class="list-group list-group-flush"></ul>
-					</div>
-				</div>
-
-				<!-- ROW ONE COLUMN TWO -->
-				<div class="col-md-8 c2">
-					<!-- COLUMN TWO ROW ONE-->
-
-					<!-- removed row -->
-					<div class="r2a">
-						<!-- Right Side Top:
-						Display section for City, current date, weather icon (like cloud or something),
-						temp, humidity, wind speed, uv index. Based on what the uv index is it displays with
-						different CSS formatting. 
-						Border around this box -->
-
-						<h3 class="city"></h3>
-						<!--City, Date, Icon-->
-						<p class="temp"></p>
-						<!-- in (Alt+0176) °F -->
-						<p class="humidity"></p>
-						<!-- in % -->
-						<p class="wind"></p>
-						<!-- in MPS -->
-						<p class="uvIndex"></p>
-
-						<!-- displayed inside of a box with CSS styling -->
-					</div>
-
-					<div class="forcast">
-						<h4>5-Day Forcast:</h4>
-					</div>
-
-					<!-- COLUMN TWO ROW TWO -->
-					<div class="row r2b justify-content-between">
-						<!-- needs to be a row so that they sit side by side ! -->
-						<!-- Right side bottom:
-						Five cards with each future day's information pulling up: 
-						date/weather icon/temp/ and humidity -->
-						<div class="col-md-2">
-							<div class="card" style="width: 8rem;">
-								<div class="card-body">
-									<h5 class="card-title dateOne"></h5>
-									<p class="card-text iconOne"></p>
-									<p class="card-text tempOne"></p>
-									<p class="card-text humidityOne"></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-2">
-							<div class="card" style="width: 8rem;">
-								<div class="card-body">
-									<h5 class="card-title dateTwo"></h5>
-									<p class="card-text iconTwo"></p>
-									<p class="card-text tempTwo"></p>
-									<p class="card-text humidityTwo"></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-2">
-							<div class="card" style="width: 8rem;">
-								<div class="card-body">
-									<h5 class="card-title dateThree"></h5>
-									<p class="card-text iconThree"></p>
-									<p class="card-text tempThree"></p>
-									<p class="card-text humidityThree"></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-2">
-							<div class="card" style="width: 8rem;">
-								<div class="card-body">
-									<h5 class="card-title dateFour"></h5>
-									<p class="card-text iconFour"></p>
-									<p class="card-text tempFour"></p>
-									<p class="card-text humidityFour"></p>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-md-2">
-							<div class="card" style="width: 8rem;">
-								<div class="card-body">
-									<h5 class="card-title dateFive"></h5>
-									<p class="card-text iconFive"></p>
-									<p class="card-text tempFive"></p>
-									<p class="card-text humidityFive"></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-		<script
-			src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-			integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-			integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-			crossorigin="anonymous"
-		></script>
-		<script
-			src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-			integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-			crossorigin="anonymous"
-		></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-		<script src="newScript.js"></script>
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div id="5day" class="card-title">
+                            </div>
+                            <div><span id="5dayIcon"></span></div>
+                            <div>Temp: <span id="5dayTemp"></span> °C</div>
+                            <div>Humidity: <span id="5dayHumidity"></span> %</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="./script.js"></script>
 </html>
